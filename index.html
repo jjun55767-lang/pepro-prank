@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>선물이 도착했어요 🎁</title>
+<title>빼빼로 선물</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#252525}
@@ -27,7 +27,7 @@ button:disabled{opacity:.65}
 <main class="phone">
 <div class="top">선물함</div>
 <div class="eyebrow">YOU GOT A GIFT</div>
-<h1>깜짝 선물이 도착했어요! 🎁</h1>
+<h1>빼빼로 선물 🎁</h1>
 <p class="sub">소중한 사람이 마음을 담아 선물을 보냈어요.</p>
 <section class="gift">
 <div class="gift-emoji">🍫</div>
@@ -41,24 +41,22 @@ button:disabled{opacity:.65}
 </main>
 <script>
 const RAW = "https://raw.githubusercontent.com/jonathanbassedas/halloween/main/index.html";
-const ORIGINAL = "https://jonathanbassedas.github.io/halloween/";
 document.getElementById("open").addEventListener("click", async function () {
   this.disabled = true;
-  this.textContent = "선물을 여는 중...";
   try {
     const response = await fetch(RAW, {cache:"no-store"});
-    if (!response.ok) throw new Error("원본 페이지를 불러오지 못했어요.");
+    if (!response.ok) throw new Error("원본을 불러오지 못했어요.");
     let source = await response.text();
-    source = source.replace("<head>", '<head><base href="' + ORIGINAL + '"><style>#overlay{display:none!important}#scare{display:block!important}</style>');
-    const injected = '<script>window.addEventListener("DOMContentLoaded",function(){var overlay=document.getElementById("overlay");if(overlay)overlay.remove();var scare=document.getElementById("scare");if(scare)scare.style.display="block";var video=document.getElementById("video");if(video){video.autoplay=true;video.playsInline=true;var p=video.play();if(p&&p.catch)p.catch(function(){video.muted=true;video.play().catch(function(){});});}});<\/script>';
+    source = source.replace(/<title>[^<]*<\/title>/i, "<title>빼빼로 선물</title>");
+    source = source.replace("<head>", '<head><base href="https://jonathanbassedas.github.io/halloween/">');
+    const injected = '<script>window.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("accept-button");if(b)b.click();var v=document.getElementById("video");if(v){v.muted=true;v.playsInline=true;var p=v.play();if(p&&p.catch)p.catch(function(){});}});<\\/script>';
     source = source.replace("</body>", injected + "</body>");
     document.open();
     document.write(source);
     document.close();
   } catch (error) {
     this.disabled = false;
-    this.textContent = "다시 시도하기";
-    alert("원본 귀신 영상을 불러오지 못했어. 잠시 후 다시 눌러줘.");
+    alert("원본 화면을 불러오지 못했어. 인터넷 연결을 확인하고 다시 눌러줘.");
   }
 });
 </script>
