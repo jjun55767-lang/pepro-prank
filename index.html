@@ -49,16 +49,16 @@ document.getElementById("open").addEventListener("click", async function () {
     const response = await fetch(RAW, {cache:"no-store"});
     if (!response.ok) throw new Error("원본 페이지를 불러오지 못했어요.");
     let source = await response.text();
-    source = source.replace("<head>", '<head><base href="' + ORIGINAL + '">');
-    source = source.replace(/(\.scare\s*\{[\s\S]*?)display\s*:\s*none\s*;/, "$1display:block;");
-    source = source.replace(/<div id="overlay" class="overlay">/i, '<div id="overlay" class="overlay" style="display:none!important">');
-    const injected = '<script>window.addEventListener("DOMContentLoaded",function(){var o=document.getElementById("overlay");if(o)o.style.display="none";var s=document.getElementById("scare");if(s)s.style.display="block";var g=document.getElementById("ghost-img");if(g)g.classList.add("flash-effect");});<\\/script>';
+    source = source.replace("<head>", '<head><base href="' + ORIGINAL + '"><style>#overlay{display:none!important}#scare{display:block!important}</style>');
+    const injected = '<script>window.addEventListener("DOMContentLoaded",function(){var overlay=document.getElementById("overlay");if(overlay)overlay.remove();var scare=document.getElementById("scare");if(scare)scare.style.display="block";var video=document.getElementById("video");if(video){video.autoplay=true;video.playsInline=true;var p=video.play();if(p&&p.catch)p.catch(function(){video.muted=true;video.play().catch(function(){});});}});<\/script>';
     source = source.replace("</body>", injected + "</body>");
     document.open();
     document.write(source);
     document.close();
   } catch (error) {
-    window.location.href = ORIGINAL;
+    this.disabled = false;
+    this.textContent = "다시 시도하기";
+    alert("원본 귀신 영상을 불러오지 못했어. 잠시 후 다시 눌러줘.");
   }
 });
 </script>
