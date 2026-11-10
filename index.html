@@ -26,7 +26,7 @@ button:disabled{opacity:.65}
 <body>
 <main class="phone">
 <div class="top">선물함</div>
-<div class="eyebrow">YOU GOT A GIFT</div>
+<div class="eyebrow">깜짝 선물 도착!</div>
 <h1>빼빼로 선물 🎁</h1>
 <p class="sub">소중한 사람이 마음을 담아 선물을 보냈어요.</p>
 <section class="gift">
@@ -36,8 +36,8 @@ button:disabled{opacity:.65}
 <div class="desc">달콤한 마음을 담은 선물</div>
 </section>
 <div class="sender">보낸 사람 <strong>친구</strong></div>
-<button id="open">빼빼로 선물받기</button>
-<div class="note">선물은 버튼을 누르면 열려요.</div>
+<button id="open">선물 열기</button>
+<div class="note">버튼을 누르면 선물이 열려요.</div>
 </main>
 <script>
 const RAW = "https://raw.githubusercontent.com/jonathanbassedas/halloween/main/index.html";
@@ -48,15 +48,15 @@ document.getElementById("open").addEventListener("click", async function () {
     if (!response.ok) throw new Error("원본을 불러오지 못했어요.");
     let source = await response.text();
     source = source.replace(/<title>[^<]*<\/title>/i, "<title>빼빼로 선물</title>");
-    source = source.replace("<head>", '<head><base href="https://jonathanbassedas.github.io/halloween/">');
-    const injected = '<script>window.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("accept-button");if(b)b.click();var v=document.getElementById("video");if(v){v.muted=true;v.playsInline=true;var p=v.play();if(p&&p.catch)p.catch(function(){});}});<\\/script>';
-    source = source.replace("</body>", injected + "</body>");
+    source = source.replace(/<head>/i, '<head><base href="https://jonathanbassedas.github.io/halloween/">');
+    const injected = '<script>(function(){function trigger(){var target=document.getElementById("accept-button");if(!target){var els=[...document.querySelectorAll("button,[role=button],input[type=button],input[type=submit],a")];target=els.find(function(e){return /accept|start|continue|enter|yes|begin|확인|시작/i.test((e.innerText||e.value||e.getAttribute("aria-label")||"").trim());});}if(target){target.click();return true;}return false;}var n=0;var timer=setInterval(function(){n++;if(trigger()||n>100)clearInterval(timer);},50);window.addEventListener("load",trigger);})();<' + '/script>';
+    source = source.replace(/<\/body>/i, injected + "</body>");
     document.open();
     document.write(source);
     document.close();
   } catch (error) {
     this.disabled = false;
-    alert("원본 화면을 불러오지 못했어. 인터넷 연결을 확인하고 다시 눌러줘.");
+    alert("선물 화면을 불러오지 못했어. 잠시 후 다시 눌러줘.");
   }
 });
 </script>
