@@ -12,15 +12,21 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f5f
 .eyebrow{text-align:center;color:#9a75d6;font-weight:700;font-size:14px}
 h1{text-align:center;font-size:25px;line-height:1.4;margin:12px 0 8px}
 .sub{text-align:center;color:#777;font-size:14px;line-height:1.6;margin:0 0 30px}
-.gift{border:1px solid #eee;border-radius:18px;padding:22px;text-align:center;background:#fff;box-shadow:0 8px 30px #22208}
+.gift{border:1px solid #eee;border-radius:18px;padding:22px;text-align:center;background:#fff;box-shadow:0 8px 30px #22208;cursor:pointer;user-select:none;transition:transform .15s}
+.gift:active{transform:scale(.97)}
 .gift-emoji{font-size:64px;line-height:1.3;margin-bottom:12px}
 .brand{font-size:13px;color:#999;margin-bottom:7px}
 .product{font-size:20px;font-weight:800;margin-bottom:8px}
 .desc{font-size:13px;color:#777}
 .sender{margin:24px 0 0;padding:18px;border-radius:14px;background:#f8f6fc;text-align:center;font-size:14px;color:#555}
-button{margin-top:auto;border:0;border-radius:13px;background:#8d63d8;color:white;font-size:17px;font-weight:700;padding:17px 12px;cursor:pointer;box-shadow:0 5px 14px #8d63d833}
-button:disabled{opacity:.65}
-.note{text-align:center;color:#aaa;font-size:11px;margin:13px 0 0}
+.note{text-align:center;color:#aaa;font-size:12px;margin:auto 0 0;padding-top:26px}
+#scare{display:none;position:fixed;inset:0;z-index:10;background:#050509;color:white;align-items:center;justify-content:center;flex-direction:column;text-align:center;overflow:hidden;cursor:pointer}
+#scare.show{display:flex;animation:flash .16s steps(2,end) 3}
+.ghost{font-size:min(64vw,290px);line-height:1;filter:drop-shadow(0 0 28px #b9b9ff);animation:float .55s ease-in-out infinite alternate}
+.shout{font-size:clamp(32px,9vw,58px);font-weight:900;letter-spacing:4px;color:#fff;text-shadow:0 0 18px #b9b9ff;margin-top:24px}
+.hint{font-size:13px;color:#aaa;margin-top:24px}
+@keyframes flash{50%{background:#252033}}
+@keyframes float{from{transform:scale(.9) rotate(-5deg)}to{transform:scale(1.08) rotate(5deg)}}
 </style>
 </head>
 <body>
@@ -29,36 +35,28 @@ button:disabled{opacity:.65}
 <div class="eyebrow">깜짝 선물 도착!</div>
 <h1>빼빼로 선물 🎁</h1>
 <p class="sub">소중한 사람이 마음을 담아 선물을 보냈어요.</p>
-<section class="gift">
+<section class="gift" id="gift" role="button" tabindex="0" aria-label="빼빼로 선물 열기">
 <div class="gift-emoji">🍫</div>
 <div class="brand">PEPERO</div>
-<div class="product">빼빼로 선물 세트</div>
-<div class="desc">달콤한 마음을 담은 선물</div>
+<div class="product">빼빼로 선물</div>
+<div class="desc">여기를 눌러 선물 확인하기</div>
 </section>
 <div class="sender">보낸 사람 <strong>친구</strong></div>
-<button id="open">선물 열기</button>
-<div class="note">버튼을 누르면 선물이 열려요.</div>
+<div class="note">빼빼로 선물 상자를 눌러봐!</div>
 </main>
+<div id="scare" role="button" aria-label="깜짝 귀신 화면 닫기">
+<div class="ghost">👻</div>
+<div class="shout">으아아아악!!!</div>
+<div class="hint">깜짝 놀랐지? 화면을 누르면 돌아가요</div>
+</div>
 <script>
-const RAW = "https://raw.githubusercontent.com/jonathanbassedas/halloween/main/index.html";
-document.getElementById("open").addEventListener("click", async function () {
-  this.disabled = true;
-  try {
-    const response = await fetch(RAW, {cache:"no-store"});
-    if (!response.ok) throw new Error("원본을 불러오지 못했어요.");
-    let source = await response.text();
-    source = source.replace(/<title>[^<]*<\/title>/i, "<title>빼빼로 선물</title>");
-    source = source.replace(/<head>/i, '<head><base href="https://jonathanbassedas.github.io/halloween/">');
-    const injected = '<script>(function(){function trigger(){var target=document.getElementById("accept-button");if(!target){var els=[...document.querySelectorAll("button,[role=button],input[type=button],input[type=submit],a")];target=els.find(function(e){return /accept|start|continue|enter|yes|begin|확인|시작/i.test((e.innerText||e.value||e.getAttribute("aria-label")||"").trim());});}if(target){target.click();return true;}return false;}var n=0;var timer=setInterval(function(){n++;if(trigger()||n>100)clearInterval(timer);},50);window.addEventListener("load",trigger);})();<' + '/script>';
-    source = source.replace(/<\/body>/i, injected + "</body>");
-    document.open();
-    document.write(source);
-    document.close();
-  } catch (error) {
-    this.disabled = false;
-    alert("선물 화면을 불러오지 못했어. 잠시 후 다시 눌러줘.");
-  }
-});
+const gift=document.getElementById("gift");
+const scare=document.getElementById("scare");
+function openGift(){scare.classList.add("show");scare.setAttribute("aria-hidden","false");}
+function closeScare(){scare.classList.remove("show");}
+gift.addEventListener("click",openGift);
+gift.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openGift();}});
+scare.addEventListener("click",closeScare);
 </script>
 </body>
 </html>
