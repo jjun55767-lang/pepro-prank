@@ -52,7 +52,7 @@ document.getElementById("open").addEventListener("click", async function () {
     source = source.replace("<head>", '<head><base href="' + ORIGINAL + '">');
     source = source.replace(/(\.scare\s*\{[\s\S]*?)display\s*:\s*none\s*;/, "$1display:block;");
     source = source.replace(/<div id="overlay" class="overlay">/i, '<div id="overlay" class="overlay" style="display:none!important">');
-    const injected = '<script>window.addEventListener("DOMContentLoaded",function(){var o=document.getElementById("overlay");if(o)o.remove();var s=document.getElementById("scare");if(s)s.style.display="block";var v=document.getElementById("video");if(v){v.autoplay=true;v.muted=false;v.playsInline=true;var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;v.play().catch(function(){});});}});<\\/script>';
+    const injected = '<script>window.addEventListener("DOMContentLoaded",function(){var o=document.getElementById("overlay");if(o)o.style.display="none";var s=document.getElementById("scare");if(s)s.style.display="block";var g=document.getElementById("ghost-img");if(g)g.classList.add("flash-effect");});<\\/script>';
     source = source.replace("</body>", injected + "</body>");
     document.open();
     document.write(source);
